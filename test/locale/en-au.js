@@ -54,6 +54,7 @@ exports['locale:en-au'] = {
                 ['s ss',                               '50 50'],
                 ['a A',                                'pm PM'],
                 ['[the] DDDo [day of the year]',       'the 45th day of the year'],
+                ['LTS',                                '3:25:50 PM'],
                 ['L',                                  '14/02/2010'],
                 ['LL',                                 '14 February 2010'],
                 ['LLL',                                '14 February 2010 3:25 PM'],
@@ -316,5 +317,36 @@ exports['locale:en-au'] = {
         test.equal(moment([2012, 0, 15]).format('w ww wo'),   '2 02 2nd', 'Jan 15 2012 should be week 2');
 
         test.done();
+    },
+
+    'lenient ordinal parsing' : function (test) {
+        var i, ordinalStr, testStr;
+        for (i = 1; i <= 31; ++i) {
+            ordinalStr = moment([2014, 0, i]).format('YYYY MM Do');
+            testStr = moment(ordinalStr, 'YYYY MM Do').format('YYYY MM D');
+            test.equal(testStr, '2014 01 ' + i, 'lenient ordinal parsing ' + i);
+        }
+        test.done();
+    },
+
+    'lenient ordinal parsing of number' : function (test) {
+        var i, testStr;
+        for (i = 1; i <= 31; ++i) {
+            testStr = moment('2014 01 ' + i, 'YYYY MM Do').format('YYYY MM D');
+            test.equal(testStr, '2014 01 ' + i,
+                    'lenient ordinal parsing of number ' + i);
+        }
+        test.done();
+    },
+
+    'strict ordinal parsing' : function (test) {
+        var i, ordinalStr, testMoment;
+        for (i = 1; i <= 31; ++i) {
+            ordinalStr = moment([2014, 0, i]).format('YYYY MMM Do');
+            testMoment = moment(ordinalStr, 'YYYY MMM Do', true);
+            test.ok(testMoment.isValid(), 'strict ordinal parsing ' + i);
+        }
+        test.done();
     }
+
 };

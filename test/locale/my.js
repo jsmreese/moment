@@ -42,7 +42,6 @@ exports['locale:my'] = {
     },
 
     'format': function (test) {
-        test.expect(22);
         var a = [
                 ['dddd, MMMM Do YYYY, h:mm:ss a', 'တနင်္ဂနွေ, ဖေဖော်ဝါရီ ၁၄ ၂၀၁၀, ၃:၂၅:၅၀ pm'],
                 ['ddd, hA', 'နွေ, ၃PM'],
@@ -58,6 +57,7 @@ exports['locale:my'] = {
                 ['s ss', '၅၀ ၅၀'],
                 ['a A', 'pm PM'],
                 ['[နှစ်၏] DDDo [ရက်မြောက်]', 'နှစ်၏ ၄၅ ရက်မြောက်'],
+                ['LTS', '၁၅:၂၅:၅၀'],
                 ['L', '၁၄/၀၂/၂၀၁၀'],
                 ['LL', '၁၄ ဖေဖော်ဝါရီ ၂၀၁၀'],
                 ['LLL', '၁၄ ဖေဖော်ဝါရီ ၂၀၁၀ ၁၅:၂၅'],
@@ -69,6 +69,7 @@ exports['locale:my'] = {
             ],
             b = moment(new Date(2010, 1, 14, 15, 25, 50, 125)),
             i;
+        test.expect(a.length);
         for (i = 0; i < a.length; i++) {
             test.equal(b.format(a[i][0]), a[i][1], a[i][0] + ' ---> ' + a[i][1]);
         }
@@ -435,6 +436,45 @@ exports['locale:my'] = {
         test.equal(moment([2012, 0, 9]).format('w ww wo'), '၂ ၀၂ ၂', 'Jan  9 2012 should be week 2');
         test.equal(moment([2012, 0, 15]).format('w ww wo'), '၂ ၀၂ ၂', 'Jan 15 2012 should be week 2');
 
+        test.done();
+    },
+
+    'lenient ordinal parsing' : function (test) {
+        var i, ordinalStr, testMoment;
+        for (i = 1; i <= 31; ++i) {
+            ordinalStr = moment([2014, 0, i]).format('YYYY MM Do');
+            testMoment = moment(ordinalStr, 'YYYY MM Do');
+            test.equal(testMoment.year(), 2014,
+                    'lenient ordinal parsing ' + i + ' year check');
+            test.equal(testMoment.month(), 0,
+                    'lenient ordinal parsing ' + i + ' month check');
+            test.equal(testMoment.date(), i,
+                    'lenient ordinal parsing ' + i + ' date check');
+        }
+        test.done();
+    },
+
+    'lenient ordinal parsing of number' : function (test) {
+        var i, testMoment;
+        for (i = 1; i <= 31; ++i) {
+            testMoment = moment('2014 01 ' + i, 'YYYY MM Do');
+            test.equal(testMoment.year(), 2014,
+                    'lenient ordinal parsing of number ' + i + ' year check');
+            test.equal(testMoment.month(), 0,
+                    'lenient ordinal parsing of number ' + i + ' month check');
+            test.equal(testMoment.date(), i,
+                    'lenient ordinal parsing of number ' + i + ' date check');
+        }
+        test.done();
+    },
+
+    'strict ordinal parsing' : function (test) {
+        var i, ordinalStr, testMoment;
+        for (i = 1; i <= 31; ++i) {
+            ordinalStr = moment([2014, 0, i]).format('YYYY MM Do');
+            testMoment = moment(ordinalStr, 'YYYY MM Do', true);
+            test.ok(testMoment.isValid(), 'strict ordinal parsing ' + i);
+        }
         test.done();
     }
 

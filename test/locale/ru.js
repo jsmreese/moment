@@ -20,7 +20,7 @@ exports['locale:ru'] = {
     },
 
     'parse' : function (test) {
-        var tests = 'январь янв_февраль фев_март мар_апрель апр_май май_июнь июнь_июль июль_август авг_сентябрь сен_октябрь окт_ноябрь ноя_декабрь дек'.split('_'), i;
+        var tests = 'январь янв_февраль фев_март март_апрель апр_май май_июнь июнь_июль июль_август авг_сентябрь сен_октябрь окт_ноябрь ноя_декабрь дек'.split('_'), i;
         function equalTest(input, mmm, i) {
             test.equal(moment(input, mmm).month(), i, input + ' should be month ' + (i + 1));
         }
@@ -59,6 +59,7 @@ exports['locale:ru'] = {
                 ['s ss',                               '50 50'],
                 ['a A',                                'дня дня'],
                 ['DDDo [день года]',                   '45-й день года'],
+                ['LTS',                                '15:25:50'],
                 ['L',                                  '14.02.2010'],
                 ['LL',                                 '14 февраля 2010 г.'],
                 ['LLL',                                '14 февраля 2010 г., 15:25'],
@@ -128,7 +129,7 @@ exports['locale:ru'] = {
     },
 
     'format month' : function (test) {
-        var expected = 'январь янв_февраль фев_март мар_апрель апр_май май_июнь июнь_июль июль_август авг_сентябрь сен_октябрь окт_ноябрь ноя_декабрь дек'.split('_'), i;
+        var expected = 'январь янв_февраль фев_март март_апрель апр_май май_июнь июнь_июль июль_август авг_сентябрь сен_октябрь окт_ноябрь ноя_декабрь дек'.split('_'), i;
         for (i = 0; i < expected.length; i++) {
             test.equal(moment([2011, i, 1]).format('MMMM MMM'), expected[i], expected[i]);
         }
@@ -149,7 +150,7 @@ exports['locale:ru'] = {
 
     'format month short case' : function (test) {
         var monthsShort = {
-            'nominative': 'янв_фев_мар_апр_май_июнь_июль_авг_сен_окт_ноя_дек'.split('_'),
+            'nominative': 'янв_фев_март_апр_май_июнь_июль_авг_сен_окт_ноя_дек'.split('_'),
             'accusative': 'янв_фев_мар_апр_мая_июня_июля_авг_сен_окт_ноя_дек'.split('_')
         }, i;
         for (i = 0; i < 12; i++) {
@@ -175,7 +176,7 @@ exports['locale:ru'] = {
 
     'format month short case with escaped symbols' : function (test) {
         var monthsShort = {
-            'nominative': 'янв_фев_мар_апр_май_июнь_июль_авг_сен_окт_ноя_дек'.split('_'),
+            'nominative': 'янв_фев_март_апр_май_июнь_июль_авг_сен_окт_ноя_дек'.split('_'),
             'accusative': 'янв_фев_мар_апр_мая_июня_июля_авг_сен_окт_ноя_дек'.split('_')
         }, i;
         for (i = 0; i < 12; i++) {
@@ -275,9 +276,9 @@ exports['locale:ru'] = {
     },
 
     'calendar last week' : function (test) {
-        var i, m;
+        var i, m, now;
 
-        function makeFormat(d) {
+        function makeFormatLast(d) {
             switch (d.day()) {
             case 0:
                 return '[В прошлое] dddd [в] LT';
@@ -292,14 +293,40 @@ exports['locale:ru'] = {
             }
         }
 
-        for (i = 2; i < 7; i++) {
-            m = moment().subtract({d: i});
-            test.equal(m.calendar(),       m.format(makeFormat(m)),  'Today - ' + i + ' days current time');
-            m.hours(0).minutes(0).seconds(0).milliseconds(0);
-            test.equal(m.calendar(),       m.format(makeFormat(m)),  'Today - ' + i + ' days beginning of day');
-            m.hours(23).minutes(59).seconds(59).milliseconds(999);
-            test.equal(m.calendar(),       m.format(makeFormat(m)),  'Today - ' + i + ' days end of day');
+        function makeFormatThis(d) {
+            switch (d.day()) {
+            case 2:
+                return '[Во] dddd [в] LT';
+            case 0:
+            case 1:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+                return '[В] dddd [в] LT';
+            }
         }
+
+        now = moment().startOf('week');
+        for (i = 2; i < 7; i++) {
+            m = moment(now).subtract({d: i});
+            test.equal(m.calendar(now),       m.format(makeFormatLast(m)),  'Today - ' + i + ' days current time');
+            m.hours(0).minutes(0).seconds(0).milliseconds(0);
+            test.equal(m.calendar(now),       m.format(makeFormatLast(m)),  'Today - ' + i + ' days beginning of day');
+            m.hours(23).minutes(59).seconds(59).milliseconds(999);
+            test.equal(m.calendar(now),       m.format(makeFormatLast(m)),  'Today - ' + i + ' days end of day');
+        }
+
+        now = moment().endOf('week');
+        for (i = 2; i < 7; i++) {
+            m = moment(now).subtract({d: i});
+            test.equal(m.calendar(now),       m.format(makeFormatThis(m)),  'Today - ' + i + ' days current time');
+            m.hours(0).minutes(0).seconds(0).milliseconds(0);
+            test.equal(m.calendar(now),       m.format(makeFormatThis(m)),  'Today - ' + i + ' days beginning of day');
+            m.hours(23).minutes(59).seconds(59).milliseconds(999);
+            test.equal(m.calendar(now),       m.format(makeFormatThis(m)),  'Today - ' + i + ' days end of day');
+        }
+
         test.done();
     },
 
@@ -404,6 +431,45 @@ exports['locale:ru'] = {
         test.equal(moment([2012,  0,  8]).format('w ww wo'), '2 02 2-я', 'Jan  8 2012 should be week 2');
         test.equal(moment([2012,  0,  9]).format('w ww wo'), '3 03 3-я', 'Jan  9 2012 should be week 3');
 
+        test.done();
+    },
+
+    'lenient ordinal parsing' : function (test) {
+        var i, ordinalStr, testMoment;
+        for (i = 1; i <= 31; ++i) {
+            ordinalStr = moment([2014, 0, i]).format('YYYY MM Do');
+            testMoment = moment(ordinalStr, 'YYYY MM Do');
+            test.equal(testMoment.year(), 2014,
+                    'lenient ordinal parsing ' + i + ' year check');
+            test.equal(testMoment.month(), 0,
+                    'lenient ordinal parsing ' + i + ' month check');
+            test.equal(testMoment.date(), i,
+                    'lenient ordinal parsing ' + i + ' date check');
+        }
+        test.done();
+    },
+
+    'lenient ordinal parsing of number' : function (test) {
+        var i, testMoment;
+        for (i = 1; i <= 31; ++i) {
+            testMoment = moment('2014 01 ' + i, 'YYYY MM Do');
+            test.equal(testMoment.year(), 2014,
+                    'lenient ordinal parsing of number ' + i + ' year check');
+            test.equal(testMoment.month(), 0,
+                    'lenient ordinal parsing of number ' + i + ' month check');
+            test.equal(testMoment.date(), i,
+                    'lenient ordinal parsing of number ' + i + ' date check');
+        }
+        test.done();
+    },
+
+    'strict ordinal parsing' : function (test) {
+        var i, ordinalStr, testMoment;
+        for (i = 1; i <= 31; ++i) {
+            ordinalStr = moment([2014, 0, i]).format('YYYY MM Do');
+            testMoment = moment(ordinalStr, 'YYYY MM Do', true);
+            test.ok(testMoment.isValid(), 'strict ordinal parsing ' + i);
+        }
         test.done();
     }
 };

@@ -40,7 +40,7 @@ exports['locale:ta'] = {
 
     'format' : function (test) {
         var a = [
-                ['dddd, MMMM Do YYYY, h:mm:ss a',              'ஞாயிற்றுக்கிழமை, பிப்ரவரி 14வது 2010, 3:25:50  எற்பாடு'],
+                ['dddd, MMMM Do YYYY, h:mm:ss a', 'ஞாயிற்றுக்கிழமை, பிப்ரவரி 14வது 2010, 3:25:50  எற்பாடு'],
                 ['ddd, hA',                       'ஞாயிறு, 3 எற்பாடு'],
                 ['M Mo MM MMMM MMM',              '2 2வது 02 பிப்ரவரி பிப்ரவரி'],
                 ['YYYY YY',                       '2010 10'],
@@ -53,7 +53,8 @@ exports['locale:ta'] = {
                 ['m mm',                          '25 25'],
                 ['s ss',                          '50 50'],
                 ['a A',                           ' எற்பாடு  எற்பாடு'],
-                ['[ஆண்டின்] DDDo  [நாள்]',        'ஆண்டின் 45வது  நாள்'],
+                ['[ஆண்டின்] DDDo  [நாள்]', 'ஆண்டின் 45வது  நாள்'],
+                ['LTS',                           '15:25:50'],
                 ['L',                             '14/02/2010'],
                 ['LL',                            '14 பிப்ரவரி 2010'],
                 ['LLL',                           '14 பிப்ரவரி 2010, 15:25'],
@@ -312,12 +313,66 @@ exports['locale:ta'] = {
     },
 
     'meridiem' : function (test) {
+        test.equal(moment([2011, 2, 23,  0, 30]).format('a'), ' யாமம்', '(after) midnight');
         test.equal(moment([2011, 2, 23,  2, 30]).format('a'), ' வைகறை', 'before dawn');
         test.equal(moment([2011, 2, 23,  9, 30]).format('a'), ' காலை', 'morning');
-        test.equal(moment([2011, 2, 23, 14, 30]).format('a'), ' நண்பகல்', 'during day');
+        test.equal(moment([2011, 2, 23, 14, 30]).format('a'), ' எற்பாடு', 'during day');
         test.equal(moment([2011, 2, 23, 17, 30]).format('a'), ' எற்பாடு', 'evening');
         test.equal(moment([2011, 2, 23, 19, 30]).format('a'), ' மாலை', 'late evening');
-        test.equal(moment([2011, 2, 23, 21, 20]).format('a'), ' இரவு', 'night');
+        test.equal(moment([2011, 2, 23, 23, 30]).format('a'), ' யாமம்', '(before) midnight');
+        test.done();
+    },
+
+    'lenient ordinal parsing' : function (test) {
+        var i, ordinalStr, testMoment;
+        for (i = 1; i <= 31; ++i) {
+            ordinalStr = moment([2014, 0, i]).format('YYYY MM Do');
+            testMoment = moment(ordinalStr, 'YYYY MM Do');
+            test.equal(testMoment.year(), 2014,
+                    'lenient ordinal parsing ' + i + ' year check');
+            test.equal(testMoment.month(), 0,
+                    'lenient ordinal parsing ' + i + ' month check');
+            test.equal(testMoment.date(), i,
+                    'lenient ordinal parsing ' + i + ' date check');
+        }
+        test.done();
+    },
+
+    'lenient ordinal parsing of number' : function (test) {
+        var i, testMoment;
+        for (i = 1; i <= 31; ++i) {
+            testMoment = moment('2014 01 ' + i, 'YYYY MM Do');
+            test.equal(testMoment.year(), 2014,
+                    'lenient ordinal parsing of number ' + i + ' year check');
+            test.equal(testMoment.month(), 0,
+                    'lenient ordinal parsing of number ' + i + ' month check');
+            test.equal(testMoment.date(), i,
+                    'lenient ordinal parsing of number ' + i + ' date check');
+        }
+        test.done();
+    },
+
+    'meridiem invariant' : function (test) {
+        var h, m, t1, t2;
+        for (h = 0; h < 24; ++h) {
+            for (m = 0; m < 60; m += 15) {
+                t1 = moment.utc([2000, 0, 1, h, m]);
+                t2 = moment(t1.format('A h:mm'), 'A h:mm');
+                test.equal(t2.format('HH:mm'), t1.format('HH:mm'),
+                        'meridiem at ' + t1.format('HH:mm'));
+            }
+        }
+
+        test.done();
+    },
+
+    'strict ordinal parsing' : function (test) {
+        var i, ordinalStr, testMoment;
+        for (i = 1; i <= 31; ++i) {
+            ordinalStr = moment([2014, 0, i]).format('YYYY MM Do');
+            testMoment = moment(ordinalStr, 'YYYY MM Do', true);
+            test.ok(testMoment.isValid(), 'strict ordinal parsing ' + i);
+        }
         test.done();
     }
 };

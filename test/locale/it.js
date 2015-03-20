@@ -54,6 +54,7 @@ exports['locale:it'] = {
                 ['s ss',                               '50 50'],
                 ['a A',                                'pm PM'],
                 ['[the] DDDo [day of the year]',       'the 45º day of the year'],
+                ['LTS',                                '15:25:50'],
                 ['L',                                  '14/02/2010'],
                 ['LL',                                 '14 febbraio 2010'],
                 ['LLL',                                '14 febbraio 2010 15:25'],
@@ -127,34 +128,34 @@ exports['locale:it'] = {
 
     'from' : function (test) {
         var start = moment([2007, 1, 28]);
-        test.equal(start.from(moment([2007, 1, 28]).add({s: 44}), true),  'alcuni secondi',    '44 seconds = seconds');
-        test.equal(start.from(moment([2007, 1, 28]).add({s: 45}), true),  'un minuto',   '45 seconds = a minute');
-        test.equal(start.from(moment([2007, 1, 28]).add({s: 89}), true),  'un minuto',   '89 seconds = a minute');
-        test.equal(start.from(moment([2007, 1, 28]).add({s: 90}), true),  '2 minuti',  '90 seconds = 2 minutes');
-        test.equal(start.from(moment([2007, 1, 28]).add({m: 44}), true),  '44 minuti', '44 minutes = 44 minutes');
-        test.equal(start.from(moment([2007, 1, 28]).add({m: 45}), true),  'un\'ora',    '45 minutes = an hour');
-        test.equal(start.from(moment([2007, 1, 28]).add({m: 89}), true),  'un\'ora',    '89 minutes = an hour');
-        test.equal(start.from(moment([2007, 1, 28]).add({m: 90}), true),  '2 ore',    '90 minutes = 2 hours');
-        test.equal(start.from(moment([2007, 1, 28]).add({h: 5}), true),   '5 ore',    '5 hours = 5 hours');
-        test.equal(start.from(moment([2007, 1, 28]).add({h: 21}), true),  '21 ore',   '21 hours = 21 hours');
+        test.equal(start.from(moment([2007, 1, 28]).add({s: 44}), true),  'alcuni secondi', '44 seconds = seconds');
+        test.equal(start.from(moment([2007, 1, 28]).add({s: 45}), true),  'un minuto',      '45 seconds = a minute');
+        test.equal(start.from(moment([2007, 1, 28]).add({s: 89}), true),  'un minuto',      '89 seconds = a minute');
+        test.equal(start.from(moment([2007, 1, 28]).add({s: 90}), true),  '2 minuti',       '90 seconds = 2 minutes');
+        test.equal(start.from(moment([2007, 1, 28]).add({m: 44}), true),  '44 minuti',      '44 minutes = 44 minutes');
+        test.equal(start.from(moment([2007, 1, 28]).add({m: 45}), true),  'un\'ora',        '45 minutes = an hour');
+        test.equal(start.from(moment([2007, 1, 28]).add({m: 89}), true),  'un\'ora',        '89 minutes = an hour');
+        test.equal(start.from(moment([2007, 1, 28]).add({m: 90}), true),  '2 ore',          '90 minutes = 2 hours');
+        test.equal(start.from(moment([2007, 1, 28]).add({h: 5}), true),   '5 ore',          '5 hours = 5 hours');
+        test.equal(start.from(moment([2007, 1, 28]).add({h: 21}), true),  '21 ore',         '21 hours = 21 hours');
         test.equal(start.from(moment([2007, 1, 28]).add({h: 22}), true),  'un giorno',      '22 hours = a day');
         test.equal(start.from(moment([2007, 1, 28]).add({h: 35}), true),  'un giorno',      '35 hours = a day');
-        test.equal(start.from(moment([2007, 1, 28]).add({h: 36}), true),  '2 giorni',     '36 hours = 2 days');
+        test.equal(start.from(moment([2007, 1, 28]).add({h: 36}), true),  '2 giorni',       '36 hours = 2 days');
         test.equal(start.from(moment([2007, 1, 28]).add({d: 1}), true),   'un giorno',      '1 day = a day');
-        test.equal(start.from(moment([2007, 1, 28]).add({d: 5}), true),   '5 giorni',     '5 days = 5 days');
-        test.equal(start.from(moment([2007, 1, 28]).add({d: 25}), true),  '25 giorni',    '25 days = 25 days');
-        test.equal(start.from(moment([2007, 1, 28]).add({d: 26}), true),  'un mese',    '26 days = a month');
-        test.equal(start.from(moment([2007, 1, 28]).add({d: 30}), true),  'un mese',    '30 days = a month');
-        test.equal(start.from(moment([2007, 1, 28]).add({d: 43}), true),  'un mese',    '43 days = a month');
-        test.equal(start.from(moment([2007, 1, 28]).add({d: 46}), true),  '2 mesi',   '46 days = 2 months');
-        test.equal(start.from(moment([2007, 1, 28]).add({d: 74}), true),  '2 mesi',   '75 days = 2 months');
-        test.equal(start.from(moment([2007, 1, 28]).add({d: 76}), true),  '3 mesi',   '76 days = 3 months');
-        test.equal(start.from(moment([2007, 1, 28]).add({M: 1}), true),   'un mese',    '1 month = a month');
-        test.equal(start.from(moment([2007, 1, 28]).add({M: 5}), true),   '5 mesi',   '5 months = 5 months');
-        test.equal(start.from(moment([2007, 1, 28]).add({d: 345}), true), 'un anno',     '345 days = a year');
-        test.equal(start.from(moment([2007, 1, 28]).add({d: 548}), true), '2 anni',    '548 days = 2 years');
-        test.equal(start.from(moment([2007, 1, 28]).add({y: 1}), true),   'un anno',     '1 year = a year');
-        test.equal(start.from(moment([2007, 1, 28]).add({y: 5}), true),   '5 anni',    '5 years = 5 years');
+        test.equal(start.from(moment([2007, 1, 28]).add({d: 5}), true),   '5 giorni',       '5 days = 5 days');
+        test.equal(start.from(moment([2007, 1, 28]).add({d: 25}), true),  '25 giorni',      '25 days = 25 days');
+        test.equal(start.from(moment([2007, 1, 28]).add({d: 26}), true),  'un mese',        '26 days = a month');
+        test.equal(start.from(moment([2007, 1, 28]).add({d: 30}), true),  'un mese',        '30 days = a month');
+        test.equal(start.from(moment([2007, 1, 28]).add({d: 43}), true),  'un mese',        '43 days = a month');
+        test.equal(start.from(moment([2007, 1, 28]).add({d: 46}), true),  '2 mesi',         '46 days = 2 months');
+        test.equal(start.from(moment([2007, 1, 28]).add({d: 74}), true),  '2 mesi',         '75 days = 2 months');
+        test.equal(start.from(moment([2007, 1, 28]).add({d: 76}), true),  '3 mesi',         '76 days = 3 months');
+        test.equal(start.from(moment([2007, 1, 28]).add({M: 1}), true),   'un mese',        '1 month = a month');
+        test.equal(start.from(moment([2007, 1, 28]).add({M: 5}), true),   '5 mesi',         '5 months = 5 months');
+        test.equal(start.from(moment([2007, 1, 28]).add({d: 345}), true), 'un anno',        '345 days = a year');
+        test.equal(start.from(moment([2007, 1, 28]).add({d: 548}), true), '2 anni',         '548 days = 2 years');
+        test.equal(start.from(moment([2007, 1, 28]).add({y: 1}), true),   'un anno',        '1 year = a year');
+        test.equal(start.from(moment([2007, 1, 28]).add({y: 5}), true),   '5 anni',         '5 years = 5 years');
         test.done();
     },
 
@@ -173,7 +174,7 @@ exports['locale:it'] = {
     'calendar day' : function (test) {
         var a = moment().hours(2).minutes(0).seconds(0);
 
-        test.equal(moment(a).calendar(),                     'Oggi alle 02:00',     'today at the same time');
+        test.equal(moment(a).calendar(),                   'Oggi alle 02:00',     'today at the same time');
         test.equal(moment(a).add({m: 25}).calendar(),      'Oggi alle 02:25',     'Now plus 25 min');
         test.equal(moment(a).add({h: 1}).calendar(),       'Oggi alle 03:00',     'Now plus 1 hour');
         test.equal(moment(a).add({d: 1}).calendar(),       'Domani alle 02:00',   'tomorrow at the same time');
@@ -196,14 +197,17 @@ exports['locale:it'] = {
     },
 
     'calendar last week' : function (test) {
-        var i, m;
+        var i, m, weekday, datestring;
         for (i = 2; i < 7; i++) {
             m = moment().subtract({d: i});
-            test.equal(m.calendar(),       m.format('[lo scorso] dddd [alle] LT'),  'Today - ' + i + ' days current time');
+             // Different date string
+            weekday = parseInt(m.format('d'), 10);
+            datestring = (weekday === 0) ? '[la scorsa] dddd [alle] LT' : '[lo scorso] dddd [alle] LT';
+            test.equal(m.calendar(), m.format(datestring), 'Today - ' + i + ' days current time');
             m.hours(0).minutes(0).seconds(0).milliseconds(0);
-            test.equal(m.calendar(),       m.format('[lo scorso] dddd [alle] LT'),  'Today - ' + i + ' days beginning of day');
+            test.equal(m.calendar(), m.format(datestring), 'Today - ' + i + ' days beginning of day');
             m.hours(23).minutes(59).seconds(59).milliseconds(999);
-            test.equal(m.calendar(),       m.format('[lo scorso] dddd [alle] LT'),  'Today - ' + i + ' days end of day');
+            test.equal(m.calendar(), m.format(datestring), 'Today - ' + i + ' days end of day');
         }
         test.done();
     },
@@ -308,6 +312,45 @@ exports['locale:it'] = {
         test.equal(moment([2012, 0,  9]).format('w ww wo'),  '2 02 2º', 'Jan  9 2012 should be week 2');
         test.equal(moment([2012, 0, 15]).format('w ww wo'),  '2 02 2º', 'Jan 15 2012 should be week 2');
 
+        test.done();
+    },
+
+    'lenient ordinal parsing' : function (test) {
+        var i, ordinalStr, testMoment;
+        for (i = 1; i <= 31; ++i) {
+            ordinalStr = moment([2014, 0, i]).format('YYYY MM Do');
+            testMoment = moment(ordinalStr, 'YYYY MM Do');
+            test.equal(testMoment.year(), 2014,
+                    'lenient ordinal parsing ' + i + ' year check');
+            test.equal(testMoment.month(), 0,
+                    'lenient ordinal parsing ' + i + ' month check');
+            test.equal(testMoment.date(), i,
+                    'lenient ordinal parsing ' + i + ' date check');
+        }
+        test.done();
+    },
+
+    'lenient ordinal parsing of number' : function (test) {
+        var i, testMoment;
+        for (i = 1; i <= 31; ++i) {
+            testMoment = moment('2014 01 ' + i, 'YYYY MM Do');
+            test.equal(testMoment.year(), 2014,
+                    'lenient ordinal parsing of number ' + i + ' year check');
+            test.equal(testMoment.month(), 0,
+                    'lenient ordinal parsing of number ' + i + ' month check');
+            test.equal(testMoment.date(), i,
+                    'lenient ordinal parsing of number ' + i + ' date check');
+        }
+        test.done();
+    },
+
+    'strict ordinal parsing' : function (test) {
+        var i, ordinalStr, testMoment;
+        for (i = 1; i <= 31; ++i) {
+            ordinalStr = moment([2014, 0, i]).format('YYYY MM Do');
+            testMoment = moment(ordinalStr, 'YYYY MM Do', true);
+            test.ok(testMoment.isValid(), 'strict ordinal parsing ' + i);
+        }
         test.done();
     }
 };

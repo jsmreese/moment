@@ -43,17 +43,25 @@ exports.create = {
     },
 
     'object' : function (test) {
-        test.expect(10);
-        test.ok(moment({year: 2010}).toDate() instanceof Date, '{year: 2010}');
-        test.ok(moment({year: 2010, month: 1}).toDate() instanceof Date, '{year: 2010, month: 1}');
-        test.ok(moment({year: 2010, month: 1, day: 12}).toDate() instanceof Date, '{year: 2010, month: 1, day: 12}');
-        test.ok(moment({year: 2010, month: 1, day: 12, hours: 1}).toDate() instanceof Date, '{year: 2010, month: 1, day: 12, hours: 1}');
-        test.ok(moment({year: 2010, month: 1, day: 12, hours: 1, minutes: 1}).toDate() instanceof Date, '{year: 2010, month: 1, hours: 12, minutes: 1, seconds: 1}');
-        test.ok(moment({year: 2010, month: 1, day: 12, hours: 1, minutes: 1, seconds: 1}).toDate() instanceof Date, '{year: 2010, month: 1, day: 12, hours: 1, minutes: 1, seconds: 1}');
-        test.ok(moment({year: 2010, month: 1, day: 12, hours: 1, minutes: 1, seconds: 1, milliseconds: 1}).toDate() instanceof Date, '{year: 2010, month: 1, day: 12, hours: 1, minutes: 1, seconds: 1, milliseconds: 1}');
-        test.equal(+moment(new Date(2010, 1, 14, 15, 25, 50, 125)), +moment({years: 2010, months: 1, days: 14, hours: 15, minutes: 25, seconds: 50, milliseconds: 125}), 'constructing with object (long plural) === constructing with new Date()');
-        test.equal(+moment(new Date(2010, 1, 14, 15, 25, 50, 125)), +moment({year: 2010, month: 1, day: 14, hour: 15, minute: 25, second: 50, millisecond: 125}), 'constructing with object (long) === constructing with new Date()');
-        test.equal(+moment(new Date(2010, 1, 14, 15, 25, 50, 125)), +moment({y: 2010, M: 1, d: 14, h: 15, m: 25, s: 50, ms: 125}), 'constructing with object (short) === constructing with new Date()');
+        var fmt = 'YYYY-MM-DD HH:mm:ss.SSS',
+            tests = [
+                [{year: 2010}, '2010-01-01 00:00:00.000'],
+                [{year: 2010, month: 1}, '2010-02-01 00:00:00.000'],
+                [{year: 2010, month: 1, day: 12}, '2010-02-12 00:00:00.000'],
+                [{year: 2010, month: 1, date: 12}, '2010-02-12 00:00:00.000'],
+                [{year: 2010, month: 1, day: 12, hours: 1}, '2010-02-12 01:00:00.000'],
+                [{year: 2010, month: 1, date: 12, hours: 1}, '2010-02-12 01:00:00.000'],
+                [{year: 2010, month: 1, day: 12, hours: 1, minutes: 1}, '2010-02-12 01:01:00.000'],
+                [{year: 2010, month: 1, date: 12, hours: 1, minutes: 1}, '2010-02-12 01:01:00.000'],
+                [{year: 2010, month: 1, day: 12, hours: 1, minutes: 1, seconds: 1}, '2010-02-12 01:01:01.000'],
+                [{year: 2010, month: 1, day: 12, hours: 1, minutes: 1, seconds: 1, milliseconds: 1}, '2010-02-12 01:01:01.001'],
+                [{years: 2010, months: 1, days: 14, hours: 15, minutes: 25, seconds: 50, milliseconds: 125}, '2010-02-14 15:25:50.125'],
+                [{year: 2010, month: 1, day: 14, hour: 15, minute: 25, second: 50, millisecond: 125}, '2010-02-14 15:25:50.125'],
+                [{y: 2010, M: 1, d: 14, h: 15, m: 25, s: 50, ms: 125}, '2010-02-14 15:25:50.125']
+            ], i;
+        for (i = 0; i < tests.length; ++i) {
+            test.equal(moment(tests[i][0]).format(fmt), tests[i][1]);
+        }
         test.done();
     },
 
@@ -68,8 +76,8 @@ exports.create = {
     'number' : function (test) {
         test.expect(3);
         test.ok(moment(1000).toDate() instanceof Date, '1000');
-        test.ok((moment(1000).valueOf() === 1000), 'testing valueOf');
-        test.ok((moment.utc(1000).valueOf() === 1000), 'testing valueOf');
+        test.equal(moment(1000).valueOf(), 1000, 'testing valueOf');
+        test.equal(moment.utc(1000).valueOf(), 1000, 'testing utc valueOf');
         test.done();
     },
 
@@ -143,6 +151,14 @@ exports.create = {
     'undefined' : function (test) {
         test.expect(1);
         test.ok(moment().toDate() instanceof Date, 'undefined');
+        test.done();
+    },
+
+    'iso format 24hrs' : function (test) {
+        test.equal(moment('2014-01-01T24:00:00.000').format('YYYY-MM-DD[T]HH:mm:ss.SSS'),
+                '2014-01-02T00:00:00.000', 'iso format with 24:00 localtime');
+        test.equal(moment.utc('2014-01-01T24:00:00.000').format('YYYY-MM-DD[T]HH:mm:ss.SSS'),
+                '2014-01-02T00:00:00.000', 'iso format with 24:00 utc');
         test.done();
     },
 
@@ -259,8 +275,10 @@ exports.create = {
                 ['HH:mm:ss S',          '00:30:00 7'],
                 ['HH:mm:ss SS',         '00:30:00 78'],
                 ['HH:mm:ss SSS',        '00:30:00 789'],
+                ['x',                   '1234567890123'],
                 ['X',                   '1234567890'],
                 ['LT',                  '12:30 AM'],
+                ['LTS',                 '12:30:29 AM'],
                 ['L',                   '09/02/1999'],
                 ['l',                   '9/2/1999'],
                 ['LL',                  'September 2, 1999'],
@@ -294,6 +312,12 @@ exports.create = {
             test.equal(moment('1234567890.123', format).valueOf(), 1234567890 * 1000 + 123, format + ' matches timestamp with milliseconds');
         }
 
+        test.done();
+    },
+
+    'unix offset milliseconds' :  function (test) {
+        test.expect(1);
+        test.equal(moment('1234567890123', 'x').valueOf(), 1234567890123, 'x matches unix offset in milliseconds');
         test.done();
     },
 
@@ -462,16 +486,18 @@ exports.create = {
     },
 
     'parsing iso' : function (test) {
-        var offset = moment([2011, 9, 8]).zone(),
+        var offset = moment([2011, 9, 8]).utcOffset(),
             pad = function (input) {
                 if (input < 10) {
                     return '0' + input;
                 }
                 return '' + input;
             },
-            hourOffset = (offset > 0) ? Math.floor(offset / 60) : Math.ceil(offset / 60),
+            hourOffset = (offset > 0 ? Math.floor(offset / 60) : Math.ceil(offset / 60)),
             minOffset = offset - (hourOffset * 60),
-            tz = (offset > 0) ? '-' + pad(hourOffset) + ':' + pad(minOffset) : '+' + pad(-hourOffset) + ':' + pad(-minOffset),
+            tz = (offset >= 0 ?
+                    '+' + pad(hourOffset) + ':' + pad(minOffset) :
+                    '-' + pad(-hourOffset) + ':' + pad(-minOffset)),
             tz2 = tz.replace(':', ''),
             tz3 = tz2.slice(0, 3),
             formats = [
@@ -810,6 +836,16 @@ exports.create = {
         test.equal(moment('12', 'SSS', true).isValid(), false, 'invalid two-digit milisecond');
         test.equal(moment('123', 'SSS', true).isValid(), true, 'valid three-digit milisecond');
 
+        // strict parsing respects month length
+        test.ok(moment('1 January 2000', 'D MMMM YYYY', true).isValid(), 'capital long-month + MMMM');
+        test.ok(!moment('1 January 2000', 'D MMM YYYY', true).isValid(), 'capital long-month + MMM');
+        test.ok(!moment('1 Jan 2000', 'D MMMM YYYY', true).isValid(), 'capital short-month + MMMM');
+        test.ok(moment('1 Jan 2000', 'D MMM YYYY', true).isValid(), 'capital short-month + MMM');
+        test.ok(moment('1 january 2000', 'D MMMM YYYY', true).isValid(), 'lower long-month + MMMM');
+        test.ok(!moment('1 january 2000', 'D MMM YYYY', true).isValid(), 'lower long-month + MMM');
+        test.ok(!moment('1 jan 2000', 'D MMMM YYYY', true).isValid(), 'lower short-month + MMMM');
+        test.ok(moment('1 jan 2000', 'D MMM YYYY', true).isValid(), 'lower short-month + MMM');
+
         test.done();
     },
 
@@ -874,7 +910,7 @@ exports.create = {
 
         test.equal(moment('22', 'WW').isoWeek(), 22, 'iso week sets the week by itself');
         test.equal(moment('2012 22', 'YYYY WW').weekYear(), 2012, 'iso week keeps parsed year');
-        test.equal(moment('22', 'WW').weekYear(), moment().weekYear(), 'iso week keeps this year');
+        test.equal(moment('22', 'WW').isoWeekYear(), moment().isoWeekYear(), 'iso week keeps this year');
 
         // order
         ver('6 2013 2', 'e gggg w', '2013 01 12', 'order doesn\'t matter');

@@ -38,6 +38,40 @@ exports['locale:gl'] = {
         test.done();
     },
 
+    'format' : function (test) {
+        var a = [
+                ['dddd, MMMM Do YYYY, h:mm:ss a',      'Domingo, Febreiro 14º 2010, 3:25:50 pm'],
+                ['ddd, hA',                            'Dom., 3PM'],
+                ['M Mo MM MMMM MMM',                   '2 2º 02 Febreiro Feb.'],
+                ['YYYY YY',                            '2010 10'],
+                ['D Do DD',                            '14 14º 14'],
+                ['d do dddd ddd dd',                   '0 0º Domingo Dom. Do'],
+                ['DDD DDDo DDDD',                      '45 45º 045'],
+                ['w wo ww',                            '7 7º 07'],
+                ['h hh',                               '3 03'],
+                ['H HH',                               '15 15'],
+                ['m mm',                               '25 25'],
+                ['s ss',                               '50 50'],
+                ['a A',                                'pm PM'],
+                ['[the] DDDo [day of the year]',       'the 45º day of the year'],
+                ['LTS',                                '15:25:50'],
+                ['L',                                  '14/02/2010'],
+                ['LL',                                 '14 Febreiro 2010'],
+                ['LLL',                                '14 Febreiro 2010 15:25'],
+                ['LLLL',                               'Domingo 14 Febreiro 2010 15:25'],
+                ['l',                                  '14/2/2010'],
+                ['ll',                                 '14 Feb. 2010'],
+                ['lll',                                '14 Feb. 2010 15:25'],
+                ['llll',                               'Dom. 14 Feb. 2010 15:25']
+            ],
+            b = moment(new Date(2010, 1, 14, 15, 25, 50, 125)),
+            i;
+        for (i = 0; i < a.length; i++) {
+            test.equal(b.format(a[i][0]), a[i][1], a[i][0] + ' ---> ' + a[i][1]);
+        }
+        test.done();
+    },
+
     'format ordinal' : function (test) {
         test.equal(moment([2011, 0, 1]).format('DDDo'), '1º', '1º');
         test.equal(moment([2011, 0, 2]).format('DDDo'), '2º', '2º');
@@ -291,6 +325,45 @@ exports['locale:gl'] = {
         test.equal(moment([2012,  0,  8]).format('w ww wo'), '2 02 2º', 'Jan  8 2012 should be week 2');
         test.equal(moment([2012,  0,  9]).format('w ww wo'), '3 03 3º', 'Jan  9 2012 should be week 3');
 
+        test.done();
+    },
+
+    'lenient ordinal parsing' : function (test) {
+        var i, ordinalStr, testMoment;
+        for (i = 1; i <= 31; ++i) {
+            ordinalStr = moment([2014, 0, i]).format('YYYY MM Do');
+            testMoment = moment(ordinalStr, 'YYYY MM Do');
+            test.equal(testMoment.year(), 2014,
+                    'lenient ordinal parsing ' + i + ' year check');
+            test.equal(testMoment.month(), 0,
+                    'lenient ordinal parsing ' + i + ' month check');
+            test.equal(testMoment.date(), i,
+                    'lenient ordinal parsing ' + i + ' date check');
+        }
+        test.done();
+    },
+
+    'lenient ordinal parsing of number' : function (test) {
+        var i, testMoment;
+        for (i = 1; i <= 31; ++i) {
+            testMoment = moment('2014 01 ' + i, 'YYYY MM Do');
+            test.equal(testMoment.year(), 2014,
+                    'lenient ordinal parsing of number ' + i + ' year check');
+            test.equal(testMoment.month(), 0,
+                    'lenient ordinal parsing of number ' + i + ' month check');
+            test.equal(testMoment.date(), i,
+                    'lenient ordinal parsing of number ' + i + ' date check');
+        }
+        test.done();
+    },
+
+    'strict ordinal parsing' : function (test) {
+        var i, ordinalStr, testMoment;
+        for (i = 1; i <= 31; ++i) {
+            ordinalStr = moment([2014, 0, i]).format('YYYY MM Do');
+            testMoment = moment(ordinalStr, 'YYYY MM Do', true);
+            test.ok(testMoment.isValid(), 'strict ordinal parsing ' + i);
+        }
         test.done();
     }
 };
