@@ -89,7 +89,7 @@ export function daysToMonths (days) {
 
 export function monthsToDays (months) {
     var wholeMonths = absFloor(months);
-    var monthFraction = months - monthFraction;
+    var monthFraction = months - wholeMonths;
     var daysInWholeMonths = absFloor(wholeMonths * AVERAGE_DAYS_PER_MONTH);
     var daysInNextMonth = absFloor((wholeMonths + 1) * AVERAGE_DAYS_PER_MONTH) - daysInWholeMonths;
     var daysInMonthFraction = monthFraction * daysInNextMonth;
