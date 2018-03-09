@@ -73,21 +73,26 @@ export function bubble () {
 // and back again for all 4800 months in the 400-year cycle, and give
 // the correct value of exactly 146097 days for 4800 months.
 var AVERAGE_DAYS_PER_MONTH = 30.436875;
-var AVERAGE_MONTHS_PER_HALF_DAY = 0.0164274420419588;
 
+// CHECK HOW THIS WORKS WITH NEGATIVE...
+// NEED TO ABS DAYS FIRST?
 export function daysToMonths (days) {
     var fractionOfAverageMonth = days / AVERAGE_DAYS_PER_MONTH;
-    var roundedWholeMonths = absRound(fractionOfAverageMonth);
-    var absDifference = mathAbs(roundedWholeMonths - fractionOfAverageMonth);
-    var wholeMonths = absDifference > 0 && absDifference < AVERAGE_MONTHS_PER_HALF_DAY ? roundedWholeMonths : absFloor(fractionOfAverageMonth);
+    var wholeMonths = absFloor(fractionOfAverageMonth);
+    var daysInWholeMonths = monthsToDays(wholeMonths);
+    var leftoverDays = days - daysInWholeMonths;
+    var daysInNextWholeMonth = monthsToDays(wholeMonths + 1) - daysInWholeMonths;
+    var fractionOfNextMonth = (leftoverDays / daysInNextWholeMonth);
 
-    if (wholeMonths === 0) {
-        return fractionOfAverageMonth;
-    }
-
-    return wholeMonths + daysToMonths(days - monthsToDays(wholeMonths));
+    return wholeMonths + fractionOfNextMonth;
 }
 
 export function monthsToDays (months) {
-    return absRound(months * AVERAGE_DAYS_PER_MONTH);
+    var wholeMonths = absFloor(months);
+    var monthFraction = months - monthFraction;
+    var daysInWholeMonths = absFloor(wholeMonths * AVERAGE_DAYS_PER_MONTH);
+    var daysInNextMonth = absFloor((wholeMonths + 1) * AVERAGE_DAYS_PER_MONTH) - daysInWholeMonths;
+    var daysInMonthFraction = monthFraction * daysInNextMonth;
+
+    return daysInWholeMonths + daysInMonthFraction;
 }
