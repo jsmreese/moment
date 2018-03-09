@@ -1,9 +1,10 @@
 import absFloor from '../utils/abs-floor';
 import absCeil from '../utils/abs-ceil';
-import absRound from '../utils/abs-round';
 import { createUTCDate } from '../create/date-from-array';
 
-var mathAbs = Math.abs;
+var abs = Math.abs;
+var floor = Math.floor;
+var ceil = Math.ceil;
 
 export function bubble () {
     var milliseconds = this._milliseconds;
@@ -77,22 +78,26 @@ var AVERAGE_DAYS_PER_MONTH = 30.436875;
 // CHECK HOW THIS WORKS WITH NEGATIVE...
 // NEED TO ABS DAYS FIRST?
 export function daysToMonths (days) {
-    var fractionOfAverageMonth = days / AVERAGE_DAYS_PER_MONTH;
-    var wholeMonths = absFloor(fractionOfAverageMonth);
+    var posneg = days < 0 ? -1 : 1;
+    var absDays = abs(days);
+    var fractionOfAverageMonth = absDays / AVERAGE_DAYS_PER_MONTH;
+    var wholeMonths = floor(fractionOfAverageMonth);
     var daysInWholeMonths = monthsToDays(wholeMonths);
-    var leftoverDays = days - daysInWholeMonths;
+    var leftoverDays = absDays - daysInWholeMonths;
     var daysInNextWholeMonth = monthsToDays(wholeMonths + 1) - daysInWholeMonths;
     var fractionOfNextMonth = (leftoverDays / daysInNextWholeMonth);
 
-    return wholeMonths + fractionOfNextMonth;
+    return posneg * (wholeMonths + fractionOfNextMonth);
 }
 
 export function monthsToDays (months) {
-    var wholeMonths = absFloor(months);
-    var monthFraction = months - wholeMonths;
-    var daysInWholeMonths = absFloor(wholeMonths * AVERAGE_DAYS_PER_MONTH);
-    var daysInNextMonth = absFloor((wholeMonths + 1) * AVERAGE_DAYS_PER_MONTH) - daysInWholeMonths;
+    var posneg = months < 0 ? -1 : 1;
+    var absMonths = abs(months);
+    var wholeMonths = floor(absMonths);
+    var monthFraction = absMonths - wholeMonths;
+    var daysInWholeMonths = floor(wholeMonths * AVERAGE_DAYS_PER_MONTH);
+    var daysInNextMonth = floor((wholeMonths + 1) * AVERAGE_DAYS_PER_MONTH) - daysInWholeMonths;
     var daysInMonthFraction = monthFraction * daysInNextMonth;
 
-    return daysInWholeMonths + daysInMonthFraction;
+    return posneg * (daysInWholeMonths + daysInMonthFraction);
 }
